@@ -58,6 +58,15 @@ def init_db():
             user_login_time   TEXT NOT NULL
         );
     """)
+    
+    # Seed a demo user if the database is newly initialized
+    cur.execute("SELECT 1 FROM users LIMIT 1")
+    if not cur.fetchone():
+        hashed_password = generate_password_hash("demo1234")
+        cur.execute(
+            "INSERT INTO users (first_name, last_name, email, username, password) VALUES (?, ?, ?, ?, ?)",
+            ("Demo", "User", "demo@example.com", "demo", hashed_password)
+        )
     conn.commit()
     conn.close()
 
