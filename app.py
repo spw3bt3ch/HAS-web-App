@@ -8,6 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 app = Flask(__name__, template_folder=".")
+app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production")
+
 # On Vercel, the filesystem is read-only. We must use the /tmp directory for the SQLite database.
 if os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV"):
     DB_PATH = "/tmp/residence.db"
