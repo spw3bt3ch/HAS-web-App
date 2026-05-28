@@ -74,7 +74,7 @@
 <div class="pulse"></div>
 <div class="card">
   <div class="check">✓</div>
-  <div class="welcome-text">Welcome, {{ visitor['name'].split()[0] }}!</div>
+  <div class="welcome-text">Welcome, {{ (visitor['name'] or 'Visitor').split()[0] }}!</div>
   <p class="sub">{{ visitor['appointment_creator'] }} has been expecting you.<br>You're welcome to the residence.</p>
   <div>
     <div class="info-row">

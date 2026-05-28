@@ -389,9 +389,9 @@
   </nav>
   <div class="sidebar-footer">
     <div class="user-chip">
-      <div class="user-avatar">{{ session.first_name[0].upper() }}</div>
+      <div class="user-avatar">{{ (session.get('first_name') or 'U')[0].upper() }}</div>
       <div class="user-info">
-        <div class="name">{{ session.first_name }}</div>
+        <div class="name">{{ session.get('first_name') or 'Resident' }}</div>
         <div class="role">Resident</div>
       </div>
     </div>

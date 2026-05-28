@@ -23,7 +23,7 @@
                     border:1px solid var(--accent);display:flex;align-items:center;
                     justify-content:center;font-family:var(--font-head);font-weight:700;
                     font-size:0.85rem;color:var(--accent);">
-          {{ msg['visitor_name'][0].upper() }}
+          {{ (msg['visitor_name'] or 'V')[0].upper() }}
         </div>
         <div>
           <div style="font-weight:500;font-size:0.9rem;">{{ msg['visitor_name'] }}</div>
