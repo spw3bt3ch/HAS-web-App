@@ -8,9 +8,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "change-this-in-production")
+# On Vercel, the filesystem is read-only. We must use the /tmp directory for the SQLite database.
+if os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV"):
+    DB_PATH = "/tmp/residence.db"
+else:
+    DB_PATH = os.environ.get("DB_PATH", "residence.db")
 
-DB_PATH = os.environ.get("DB_PATH", "residence.db")
 
 
 # ── DB helpers ────────────────────────────────────────────────────────────────
@@ -57,6 +60,10 @@ def init_db():
     """)
     conn.commit()
     conn.close()
+
+
+# Auto-initialize database tables on application startup
+init_db()
 
 
 def pin_generator():
