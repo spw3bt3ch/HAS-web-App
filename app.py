@@ -7,7 +7,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder=".")
 # On Vercel, the filesystem is read-only. We must use the /tmp directory for the SQLite database.
 if os.environ.get("VERCEL") or os.environ.get("VERCEL_ENV"):
     DB_PATH = "/tmp/residence.db"
@@ -62,8 +62,12 @@ def init_db():
     conn.close()
 
 
-# Auto-initialize database tables on application startup
-init_db()
+# Initialize database on the first request to prevent write errors during Vercel's import phase
+@app.before_request
+def initialize_database():
+    if not getattr(app, "_database_initialized", False):
+        init_db()
+        app._database_initialized = True
 
 
 def pin_generator():
