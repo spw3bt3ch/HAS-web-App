@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Register — SMI HAS{% endblock %}
+{% block page_title %}Add Resident{% endblock %}
+
+{% block content %}
+<div style="max-width:520px;">
+  <div class="card">
+    <div class="card-title">Register New Resident</div>
+    <form method="POST">
+      <div class="form-grid form-grid-2">
+        <div>
+          <label>First Name</label>
+          <input type="text" name="first_name" required>
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input type="text" name="last_name" required>
+        </div>
+      </div>
+      <div style="margin-top:14px;">
+        <label>Email Address</label>
+        <input type="email" name="email" required>
+      </div>
+      <div style="margin-top:14px;">
+        <label>Username</label>
+        <input type="text" name="username" required>
+      </div>
+      <div style="margin-top:14px;">
+        <label>Password</label>
+        <input type="password" name="password" required>
+      </div>
+      <div style="margin-top:14px;margin-bottom:20px;">
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Create Resident Account →</button>
+    </form>
+  </div>
+  <div style="margin-top:12px;font-size:0.75rem;color:var(--muted);text-align:center;">
+    Passwords are securely hashed with bcrypt before storage.
+  </div>
+</div>
+{% endblock %}

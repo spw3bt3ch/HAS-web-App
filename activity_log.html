@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Activity Log — SMI HAS{% endblock %}
+{% block page_title %}Activity Log{% endblock %}
+
+{% block content %}
+<div style="color:var(--muted);font-size:0.82rem;margin-bottom:20px;">
+  {{ logs|length }} check-in(s) recorded
+</div>
+
+<div class="card">
+  {% if logs %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Visitor Name</th>
+          <th>Check-in Time</th>
+          <th>Host Resident</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for log in logs %}
+        <tr>
+          <td style="color:var(--muted);">{{ loop.index }}</td>
+          <td style="font-weight:500;">{{ log['visitor_name'] }}</td>
+          <td style="color:var(--muted);font-size:0.78rem;">{{ log['visitor_login_time'] }}</td>
+          <td><span class="badge badge-green">{{ log['username'] }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="icon">◳</div>
+    No activity recorded yet. Visitor check-ins will appear here.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

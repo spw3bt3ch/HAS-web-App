@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — SMI HAS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div style="margin-bottom:28px;">
+  <h1 style="font-family:var(--font-head);font-weight:800;font-size:1.6rem;line-height:1.2;">
+    {{ greeting }}, {{ session.first_name }}. 👋
+  </h1>
+  <p style="color:var(--muted);font-size:0.82rem;margin-top:4px;">
+    {% if weather %}
+      Lagos · {{ weather.temp }}°C · {{ weather.desc }}
+    {% else %}
+      Lagos, Nigeria · SMI Residence
+    {% endif %}
+  </p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Registered Visitors</div>
+    <div class="stat-value">{{ visitor_count }}</div>
+    <div class="stat-sub">active appointments</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Messages</div>
+    <div class="stat-value">{{ message_count }}</div>
+    <div class="stat-sub">from visitors</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Residents</div>
+    <div class="stat-value">{{ user_count }}</div>
+    <div class="stat-sub">system users</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Log Entries</div>
+    <div class="stat-value">{{ log_count }}</div>
+    <div class="stat-sub">visitor check-ins</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title">Recent Activity</div>
+    {% if recent_logs %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Visitor</th>
+            <th>Check-in Time</th>
+            <th>Resident</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in recent_logs %}
+          <tr>
+            <td>{{ log['visitor_name'] }}</td>
+            <td style="color:var(--muted);font-size:0.78rem;">{{ log['visitor_login_time'] }}</td>
+            <td><span class="badge badge-green">{{ log['username'] }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty"><div class="icon">◳</div>No activity yet</div>
+    {% endif %}
+    <div style="margin-top:16px;">
+      <a href="{{ url_for('activity_log') }}" class="btn btn-ghost btn-sm">View all logs →</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Quick Actions</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <a href="{{ url_for('visitors') }}" class="btn btn-primary">⊕ Create Visitor PIN</a>
+      <a href="{{ url_for('messages') }}" class="btn btn-ghost">◫ Read Messages</a>
+      <a href="{{ url_for('register') }}" class="btn btn-ghost">◉ Add New Resident</a>
+      <a href="{{ url_for('visitor_portal') }}" class="btn btn-ghost" target="_blank">↗ Open Visitor Portal</a>
+    </div>
+
+    <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+      <div style="font-size:0.7rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">System Status</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:0.8rem;">
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--muted)">Database</span>
+          <span class="badge badge-green">Online</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--muted)">Visitor Portal</span>
+          <span class="badge badge-green">Active</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <span style="color:var(--muted)">Weather API</span>
+          <span class="badge {% if weather %}badge-green{% else %}badge-muted{% endif %}">
+            {% if weather %}Connected{% else %}Disconnected{% endif %}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

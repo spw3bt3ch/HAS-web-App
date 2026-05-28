@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visitor Portal — SMI Residence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f0e; --surface: #131918; --surface2: #1a2120;
+    --border: #243030; --accent: #00e5a0; --accent2: #00b07a;
+    --danger: #ff4d6d; --warn: #ffb703; --text: #e8f0ef; --muted: #6b8a85;
+    --font-head: 'Syne', sans-serif; --font-mono: 'DM Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-mono);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .bg-grid {
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .wrap {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    animation: fadeUp 0.35s ease;
+  }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  .header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .brand { font-family: var(--font-head); font-weight: 800; font-size: 1.4rem; color: var(--accent); }
+  .brand-sub { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 2px; }
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 20px;
+    gap: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 9px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .tab.active { background: var(--surface2); color: var(--text); }
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeUp 0.2s ease; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 28px;
+  }
+  .card-title {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 20px;
+  }
+  .form-group { margin-bottom: 16px; }
+  label { display: block; font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+  input, textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); }
+
+  /* Big PIN input */
+  .pin-input {
+    font-size: 2rem !important;
+    font-family: var(--font-head) !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.3em !important;
+    text-align: center !important;
+    padding: 20px !important;
+  }
+  textarea { resize: vertical; min-height: 90px; }
+  .btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 4px;
+  }
+  .btn-primary { background: var(--accent); color: var(--bg); font-weight: 500; }
+  .btn-primary:hover { background: var(--accent2); }
+  .flash { padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 16px; border-left: 3px solid; }
+  .flash.error   { background: rgba(255,77,109,0.08); border-color: var(--danger); color: var(--danger); }
+  .flash.success { background: rgba(0,229,160,0.08);  border-color: var(--accent); color: var(--accent); }
+  .flash.warning { background: rgba(255,183,3,0.08);  border-color: var(--warn);   color: var(--warn); }
+  .back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .back-link:hover { color: var(--accent); }
+  .hint {
+    font-size: 0.73rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="wrap">
+  <div class="header">
+    <div class="brand">SMI·HAS</div>
+    <div class="brand-sub">Visitor Portal</div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+  <div class="flash {{ category }}">{{ message }}</div>
+  {% endfor %}
+  {% endwith %}
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('pin', this)">🔑 Enter PIN</button>
+    <button class="tab" onclick="switchTab('msg', this)">✉ Leave Message</button>
+  </div>
+
+  <div id="panel-pin" class="panel active">
+    <div class="card">
+      <div class="card-title">Visitor Check-In</div>
+      <form method="POST">
+        <input type="hidden" name="action" value="login">
+        <div class="form-group">
+          <label>Your 4-digit PIN</label>
+          <input class="pin-input" type="number" name="pin" placeholder="0000"
+                 min="1000" max="9999" maxlength="4" required autofocus>
+        </div>
+        <button type="submit" class="btn btn-primary">Check In →</button>
+      </form>
+      <p class="hint">Enter the PIN your host shared with you.<br>Contact them if you don't have one.</p>
+    </div>
+  </div>
+
+  <div id="panel-msg" class="panel">
+    <div class="card">
+      <div class="card-title">Leave a Message</div>
+      <form method="POST">
+        <input type="hidden" name="action" value="message">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" name="visitor_name" placeholder="Full name" required>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea name="message" placeholder="Write your message for the residents..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Message →</button>
+      </form>
+    </div>
+  </div>
+
+  <a href="{{ url_for('login') }}" class="back-link">← Resident login</a>
+</div>
+
+<script>
+  function switchTab(panel, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + panel).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Auto-switch to message tab if message flash was shown
+  {% with messages = get_flashed_messages() %}
+  {% if messages and 'sent' in messages[0]|lower %}
+  switchTab('msg', document.querySelectorAll('.tab')[1]);
+  {% endif %}
+  {% endwith %}
+</script>
+</body>
+</html>

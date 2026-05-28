@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Messages — SMI HAS{% endblock %}
+{% block page_title %}Visitor Messages{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+  <div style="color:var(--muted);font-size:0.82rem;">{{ messages|length }} message(s) total</div>
+  {% if messages %}
+  <form method="POST" action="{{ url_for('clear_messages') }}"
+        onsubmit="return confirm('Clear all messages? This cannot be undone.')">
+    <button type="submit" class="btn btn-danger btn-sm">Clear All</button>
+  </form>
+  {% endif %}
+</div>
+
+{% if messages %}
+<div style="display:flex;flex-direction:column;gap:14px;">
+  {% for msg in messages %}
+  <div class="card" style="padding:20px 24px;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,229,160,0.12);
+                    border:1px solid var(--accent);display:flex;align-items:center;
+                    justify-content:center;font-family:var(--font-head);font-weight:700;
+                    font-size:0.85rem;color:var(--accent);">
+          {{ msg['visitor_name'][0].upper() }}
+        </div>
+        <div>
+          <div style="font-weight:500;font-size:0.9rem;">{{ msg['visitor_name'] }}</div>
+          <div style="font-size:0.7rem;color:var(--muted);">{{ msg['timestamp'] }}</div>
+        </div>
+      </div>
+      <span class="badge badge-muted">#{{ loop.index }}</span>
+    </div>
+    <div style="color:var(--text);font-size:0.85rem;line-height:1.6;
+                padding-left:42px;padding-top:4px;">
+      {{ msg['message'] }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card">
+  <div class="empty"><div class="icon">◫</div>No messages yet. Visitors can leave messages via the Visitor Portal.</div>
+</div>
+{% endif %}
+{% endblock %}

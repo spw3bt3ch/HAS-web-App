@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Visitors — SMI HAS{% endblock %}
+{% block page_title %}Visitors{% endblock %}
+
+{% block content %}
+<div class="grid-2" style="margin-bottom:24px;align-items:start;">
+  <div class="card">
+    <div class="card-title">Create Visitor Appointment</div>
+    <form method="POST" action="{{ url_for('create_visitor') }}">
+      <div class="form-grid">
+        <div>
+          <label>Visitor Full Name</label>
+          <input type="text" name="name" placeholder="e.g. John Adebayo" required>
+        </div>
+        <div>
+          <label>Mobile Number</label>
+          <input type="text" name="mobile_number" placeholder="+234 800 000 0000" required>
+        </div>
+        <div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">Generate PIN →</button>
+        </div>
+      </div>
+    </form>
+    <div style="margin-top:16px;padding:12px;background:var(--surface2);border-radius:8px;font-size:0.75rem;color:var(--muted);">
+      A unique 4-digit PIN will be generated and shown here. Share it with your visitor so they can check in at the Visitor Portal.
+    </div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    <div class="card" style="padding:16px 20px;">
+      <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Total Visitors</div>
+      <div style="font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--accent);">{{ visitors|length }}</div>
+    </div>
+    <div class="card" style="padding:16px 20px;">
+      <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;">Visitor Portal</div>
+      <div style="margin-top:8px;">
+        <a href="{{ url_for('visitor_portal') }}" target="_blank" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">Open Portal ↗</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">All Visitors</div>
+  {% if visitors %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Mobile</th>
+          <th>Created by</th>
+          <th>PIN</th>
+          <th>Timestamp</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in visitors %}
+        <tr>
+          <td style="color:var(--muted);">{{ loop.index }}</td>
+          <td style="font-weight:500;">{{ v['name'] }}</td>
+          <td style="color:var(--muted);">{{ v['mobile_number'] }}</td>
+          <td><span class="badge badge-green">{{ v['appointment_creator'] }}</span></td>
+          <td><span class="pin-display">{{ v['pin'] }}</span></td>
+          <td style="color:var(--muted);font-size:0.75rem;">{{ v['timestamp'] }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('delete_visitor', vid=v['id']) }}"
+                  onsubmit="return confirm('Delete {{ v['name'] }}?')">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">
+    <div class="icon">◈</div>
+    No visitors yet. Create one above.
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

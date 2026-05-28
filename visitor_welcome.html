@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome — SMI Residence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0b0f0e;--surface:#131918;--border:#243030;
+    --accent:#00e5a0;--text:#e8f0ef;--muted:#6b8a85;
+    --font-head:'Syne',sans-serif;--font-mono:'DM Mono',monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:var(--font-mono);background:var(--bg);color:var(--text);
+    min-height:100vh;display:grid;place-items:center;padding:24px;
+    position:relative;overflow:hidden;
+  }
+  .bg-grid{
+    position:fixed;inset:0;
+    background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);
+    background-size:40px 40px;opacity:0.3;pointer-events:none;
+  }
+  .pulse{
+    position:fixed;width:600px;height:600px;border-radius:50%;
+    background:radial-gradient(circle,rgba(0,229,160,0.08) 0%,transparent 70%);
+    top:50%;left:50%;transform:translate(-50%,-50%);
+    animation:pulse 3s ease-in-out infinite;pointer-events:none;
+  }
+  @keyframes pulse{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.1);}}
+  .card{
+    position:relative;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:20px;padding:52px 44px;max-width:420px;width:100%;
+    text-align:center;
+    animation:fadeUp 0.5s ease;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+  .check{
+    width:72px;height:72px;border-radius:50%;
+    background:rgba(0,229,160,0.12);border:2px solid var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    font-size:2rem;margin:0 auto 24px;
+    animation:pop 0.4s 0.2s both cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes pop{from{transform:scale(0);}to{transform:scale(1);}}
+  .welcome-text{
+    font-family:var(--font-head);font-weight:800;font-size:1.6rem;
+    color:var(--accent);margin-bottom:8px;
+  }
+  .sub{font-size:0.88rem;color:var(--muted);line-height:1.6;margin-bottom:28px;}
+  .info-row{
+    display:flex;justify-content:space-between;
+    padding:10px 0;border-bottom:1px solid var(--border);
+    font-size:0.8rem;
+  }
+  .info-row:last-child{border-bottom:none;}
+  .info-label{color:var(--muted);}
+  .info-value{color:var(--text);font-weight:500;}
+  .back{
+    display:inline-block;margin-top:28px;
+    padding:10px 24px;border-radius:8px;
+    border:1px solid var(--border);color:var(--muted);
+    font-family:var(--font-mono);font-size:0.8rem;
+    text-decoration:none;transition:all 0.15s;
+  }
+  .back:hover{border-color:var(--accent);color:var(--accent);}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="pulse"></div>
+<div class="card">
+  <div class="check">✓</div>
+  <div class="welcome-text">Welcome, {{ visitor['name'].split()[0] }}!</div>
+  <p class="sub">{{ visitor['appointment_creator'] }} has been expecting you.<br>You're welcome to the residence.</p>
+  <div>
+    <div class="info-row">
+      <span class="info-label">Full Name</span>
+      <span class="info-value">{{ visitor['name'] }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Host</span>
+      <span class="info-value">{{ visitor['appointment_creator'] }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Appointment Created</span>
+      <span class="info-value">{{ visitor['timestamp'] }}</span>
+    </div>
+  </div>
+  <a href="{{ url_for('visitor_portal') }}" class="back">← Back to Portal</a>
+</div>
+</body>
+</html>

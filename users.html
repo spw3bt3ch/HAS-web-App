@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Users — SMI HAS{% endblock %}
+{% block page_title %}System Users{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+  <div style="color:var(--muted);font-size:0.82rem;">{{ users|length }} registered resident(s)</div>
+  <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">⊕ Add Resident</a>
+</div>
+
+<div class="card">
+  {% if users %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Username</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td style="color:var(--muted);">{{ loop.index }}</td>
+          <td style="font-weight:500;">{{ u['first_name'] }} {{ u['last_name'] }}</td>
+          <td style="color:var(--muted);font-size:0.8rem;">{{ u['email'] }}</td>
+          <td><span class="badge badge-green">{{ u['username'] }}</span></td>
+          <td>
+            {% if u['id'] != session.user_id %}
+            <form method="POST" action="{{ url_for('delete_user', uid=u['id']) }}"
+                  onsubmit="return confirm('Delete user {{ u['username'] }}?')">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+            {% else %}
+            <span style="font-size:0.72rem;color:var(--muted);">You</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty"><div class="icon">◉</div>No users found.</div>
+  {% endif %}
+</div>
+{% endblock %}
