@@ -374,6 +374,46 @@ def delete_user(uid):
     return redirect(url_for("users"))
 
 
+# ── Global Exception Handler ──────────────────────────────────────────────────
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    from werkzeug.exceptions import HTTPException
+    import traceback
+    
+    # Pass through standard Flask HTTP exceptions (like 404, 405, redirects)
+    if isinstance(e, HTTPException):
+        return e
+        
+    # Render a beautiful debug traceback directly to the page for any code crashes (500s)
+    tb = traceback.format_exc()
+    return f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Application Error</title>
+        <style>
+            body {{ font-family: monospace; padding: 30px; background: #0b0f0e; color: #e8f0ef; line-height: 1.6; }}
+            .card {{ background: #131918; border: 1px solid #243030; border-radius: 12px; padding: 30px; max-width: 800px; margin: 40px auto; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }}
+            h1 {{ color: #ff4d6d; font-family: sans-serif; font-size: 1.8rem; margin-top: 0; }}
+            pre {{ background: #1a2120; border: 1px solid #243030; padding: 20px; border-radius: 8px; overflow-x: auto; color: #e8f0ef; font-size: 0.85rem; }}
+            p {{ color: #6b8a85; font-size: 0.9rem; }}
+        </style>
+    </head>
+    <body>
+        <div class="card">
+            <h1>Application Exception Encountered</h1>
+            <p>An unexpected error occurred during request execution. Below is the technical traceback to help us resolve the issue:</p>
+            <pre>{tb}</pre>
+            <p style="margin-top: 20px; font-size: 0.8rem; color: #00e5a0;">Please copy and paste the traceback above to the assistant so we can solve the issue immediately.</p>
+        </div>
+    </body>
+    </html>
+    """, 500
+
+
 # ── Run ───────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
